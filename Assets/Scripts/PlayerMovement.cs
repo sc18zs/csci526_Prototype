@@ -12,7 +12,6 @@ public class PlayerMovement : MonoBehaviour
     private bool onFlipMode = false;
 
 
-    private bool inOppositeBackground=false;
     public GameObject background;
 
     private float moveSpeed = 4f;
@@ -128,11 +127,18 @@ public class PlayerMovement : MonoBehaviour
             countProjectile += 1;
             Debug.Log("奖励累计" + countProjectile);
         }
-        //碰到障碍
-        if (colliderSpriteRender.sprite == square)
+        //碰到障碍或怪物追上玩家
+        if (colliderSpriteRender.sprite == square && !other.gameObject.CompareTag("Border"))
         {
-            Debug.Log("碰到障碍物");
+            Debug.Log("碰到障碍物/怪物追上玩家");
             Destroy(other.gameObject);
+            QuitGame();
+        }
+
+        //到达终点游戏结束
+        if (other.gameObject.CompareTag("Destination"))
+        {
+            Debug.Log("到达终点，游戏结束！");
             QuitGame();
         }
     }
