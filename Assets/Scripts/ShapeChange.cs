@@ -23,7 +23,7 @@ public class ShapeChange : MonoBehaviour
 
 
     //障碍物转换为子弹
-    public void ChangeToBullet()
+    public void ChangeToPowerUp()
     { 
         spriteRenderer.sprite = triangle;
         spriteRenderer.color = Color.yellow;

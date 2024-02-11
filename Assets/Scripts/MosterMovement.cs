@@ -7,6 +7,8 @@ public class MosterMovement : MonoBehaviour
     private float moveSpeed = 4.2f;
     private Rigidbody2D monster;
     public GameObject player;
+    public GameObject projectile;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,6 +28,14 @@ public class MosterMovement : MonoBehaviour
         {
             QuitGame();
         }
+
+        //子弹击中怪兽则减速
+        if (other.gameObject.CompareTag("Projectile"))
+        {
+            Debug.Log("击中怪兽");
+            Destroy(other.gameObject);
+        }
+
     }
 
     void QuitGame()

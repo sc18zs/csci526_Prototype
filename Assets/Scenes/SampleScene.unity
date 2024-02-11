@@ -1160,6 +1160,7 @@ MonoBehaviour:
   background: {fileID: 1557284765}
   triangle: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
   square: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  projectilePrefab: {fileID: 2813064103954061802, guid: 31d14427a281940ba85d52f7457b1d90, type: 3}
 --- !u!1 &937553396
 GameObject:
   m_ObjectHideFlags: 0
@@ -2236,6 +2237,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 925688761}
+  projectile: {fileID: 2813064103954061802, guid: 31d14427a281940ba85d52f7457b1d90, type: 3}
+  count: 0
 --- !u!212 &1637332906
 SpriteRenderer:
   m_ObjectHideFlags: 0

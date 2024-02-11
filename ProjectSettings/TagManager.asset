@@ -6,6 +6,7 @@ TagManager:
   tags:
   - OppositeBackground
   - reward
+  - Projectile
   layers:
   - Default
   - TransparentFX

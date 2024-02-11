@@ -16,13 +16,16 @@ public class PlayerMovement : MonoBehaviour
     public GameObject background;
 
     private float moveSpeed = 4f;
-    private int countPowerUp = 0;
 
     //定义不同形状
     public Sprite triangle;
     public Sprite square;
     private SpriteRenderer playerSpriteRenderer;
     private SpriteRenderer spriteRendererBackground;
+
+    //子弹
+    public GameObject projectilePrefab;
+    public static int countProjectile = 0;
 
     //获取沿路的所有物体
     ShapeChange[] items;
@@ -48,6 +51,13 @@ public class PlayerMovement : MonoBehaviour
         //判断是否进入翻转模式
         if (onFlipMode) {
             lanchFlipMode();
+            //空格键发射子弹,当子弹数量大于三个的时候可以射击
+            if (Input.GetKeyDown(KeyCode.Space) && countProjectile>=3)
+            {
+                //launch a projectile from the player
+                Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+                countProjectile -= 3;
+            }
         }
         else
         {
@@ -99,7 +109,7 @@ public class PlayerMovement : MonoBehaviour
         items = FindObjectsOfType<ShapeChange>();
         foreach (ShapeChange shapeChangeScript in items)
         {
-            shapeChangeScript.ChangeToBullet();
+            shapeChangeScript.ChangeToPowerUp();
         }
     }
 
@@ -115,8 +125,8 @@ public class PlayerMovement : MonoBehaviour
         {
             Destroy(other.gameObject);
             //累计奖励数量加一
-            countPowerUp += 1;
-            Debug.Log("奖励累计" + countPowerUp);
+            countProjectile += 1;
+            Debug.Log("奖励累计" + countProjectile);
         }
         //碰到障碍
         if (colliderSpriteRender.sprite == square)
