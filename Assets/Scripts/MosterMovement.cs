@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class MosterMovement : MonoBehaviour
 {
-    private float moveSpeed = 4.2f;
+    private float moveSpeed;
+    public static  float max_monster_speed = 5.2f;
+    const float MIN_MONSTER_SPEED = 4.5f;
+
     private Rigidbody2D monster;
     public GameObject player;
     public GameObject projectile;
@@ -16,18 +19,20 @@ public class MosterMovement : MonoBehaviour
     void Start()
     {
         monster = GetComponent<Rigidbody2D>();
+        moveSpeed = max_monster_speed;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //如果monster的速度未达到最高值，每三秒钟速度增加0.1
-        if (moveSpeed < 4.2f)
+        Debug.Log("怪物当前最大速度为" + max_monster_speed);
+        // If the monster's speed is not at the maximum value, increase the speed by 0.3 every three seconds
+        if (moveSpeed < max_monster_speed)
         {
             timer += Time.deltaTime;
             if (timer > 3.0f)
             {
-                moveSpeed += 0.1f;
+                moveSpeed = Mathf.Min(moveSpeed + 0.3f, max_monster_speed);
                 Debug.Log("怪兽加速" + moveSpeed);
                 timer = 0.0f;
             }
@@ -37,22 +42,19 @@ public class MosterMovement : MonoBehaviour
     }
 
 
-    private void OnTriggerEnter2D(Collider2D other) {
-        ////如果怪物追上玩家，游戏结束
-        //if (other.gameObject == player)
-        //{
-        //    Debug.Log("怪物追上玩家");
-        //    QuitGame();
-        //}
-
-        //子弹击中怪兽则减速
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // Slow down if the monster is hit by a projectile
         if (other.gameObject.CompareTag("Projectile"))
         {
             Debug.Log("击中怪兽");
             Destroy(other.gameObject);
-            //每一次减速0.2
-            moveSpeed -= 0.1f;
-            Debug.Log("怪兽当前速度为" + moveSpeed);
+            // Slow down by 0.1 each time, stop when reaching the minimum speed
+            if (moveSpeed >= MIN_MONSTER_SPEED)
+            {
+                moveSpeed -= 0.1f;
+                Debug.Log("怪兽当前速度为" + moveSpeed);
+            }
         }
 
     }

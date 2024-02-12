@@ -11,22 +11,27 @@ public class PlayerMovement : MonoBehaviour
 
     private bool onFlipMode = false;
 
-
     public GameObject background;
 
-    private float moveSpeed = 4f;
+    private float moveSpeed = 5f;
 
-    //定义不同形状
+    //Define different shapes
     public Sprite triangle;
     public Sprite square;
-    private SpriteRenderer playerSpriteRenderer;
+    public Sprite hexagonFlat;
     private SpriteRenderer spriteRendererBackground;
 
-    //子弹
+    //Projectiles
     public GameObject projectilePrefab;
     public static int countProjectile = 0;
+    const int PROJECTILE_COLLECTION = 3;
 
-    //获取沿路的所有物体
+    //Infinite mode timer
+    private float infiniteTimer = 0.0f;
+    private bool infiniteMode = false;
+    const float INFINITE_PERIOD = 2.0f;
+
+    //Get all objects along the way
     ShapeChange[] items;
 
     // Start is called before the first frame update
@@ -42,20 +47,24 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //设置按E进入/退出翻转模式
+        // Set to enter/exit flip mode with E key
         if (Input.GetKeyDown(KeyCode.E)) {
             onFlipMode = !onFlipMode;
         }
 
-        //判断是否进入翻转模式
+        // Check if entering flip mode
         if (onFlipMode) {
             lanchFlipMode();
-            //空格键发射子弹,当子弹数量大于三个的时候可以射击
+            // Shoot projectiles with space key, only when projectile count is greater than or equal to three
             if (Input.GetKeyDown(KeyCode.Space) && countProjectile>=3)
             {
                 //launch a projectile from the player
                 Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-                countProjectile -= 3;
+                countProjectile -= PROJECTILE_COLLECTION;
+            }
+            if (infiniteMode == true)
+            {
+                LaunchInfinite();
             }
         }
         else
@@ -68,66 +77,80 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    //启动翻转模式
+    // Launch flip mode
     private void lanchFlipMode() {
-        //翻转按键
+
         ReverseVerticalInput();
 
-        //改变背景颜色为灰色
-        //检查背景是否存在
+        // Change background color to grey
+        // Check if background exists
         if (background != null)
         {
-            // 改变颜色
+            // Change the color
             if (spriteRendererBackground != null)
             {
                 spriteRendererBackground.color = Color.grey;
             }
         }
-        //子弹变成障碍物
+        // Projectiles turn into obstacles
         items = FindObjectsOfType<ShapeChange>();
         foreach (ShapeChange shapeChangeScript in items)
         {
-            shapeChangeScript.ChangeToObstacle();
+            if (shapeChangeScript.CompareTag("Diamond"))
+            {
+                shapeChangeScript.ChangeToInfiniteObstacle();
+            }
+            else
+            {
+                shapeChangeScript.ChangeToObstacle();
+            }
         }
     }
 
 
-    //关闭翻转模式
+    // Turn off flip mode
     private void offFlipMode() {
-        //改变背景颜色为黑色
+        // Change background color to black
         if (background != null)
         {
-            // 改变颜色
             if (spriteRendererBackground != null)
             {
                 spriteRendererBackground.color = Color.black;
             }
         }
 
-        //障碍物变成子弹
+        // Obstacles turn into projectiles
         items = FindObjectsOfType<ShapeChange>();
         foreach (ShapeChange shapeChangeScript in items)
         {
-            shapeChangeScript.ChangeToPowerUp();
+            if (shapeChangeScript.CompareTag("Diamond"))
+            {
+                shapeChangeScript.ChangeToInfiniteReward();
+            }
+            else
+            {
+                shapeChangeScript.ChangeToPowerUp();
+            }
         }
     }
 
 
 
-    //物体进入物体碰撞区内调用
+    // Called when an object enters the collider area
     private void OnTriggerEnter2D(Collider2D other)
     {
-        //判断物体类型
+        // Check the shape of the object
         SpriteRenderer colliderSpriteRender = other.GetComponent<SpriteRenderer>();
-        //收集子弹
+        // Collect projectiles
         if (colliderSpriteRender.sprite == triangle)
         {
             Destroy(other.gameObject);
-            //累计奖励数量加一
+            // Increment the reward count
             countProjectile += 1;
             Debug.Log("奖励累计" + countProjectile);
         }
-        //碰到障碍或怪物追上玩家
+
+        // Hit obstacle or monster catches up with the player
         if (colliderSpriteRender.sprite == square && !other.gameObject.CompareTag("Border"))
         {
             Debug.Log("碰到障碍物/怪物追上玩家");
@@ -135,21 +158,53 @@ public class PlayerMovement : MonoBehaviour
             QuitGame();
         }
 
-        //到达终点游戏结束
+        //Player reach the end
         if (other.gameObject.CompareTag("Destination"))
         {
             Debug.Log("到达终点，游戏结束！");
             QuitGame();
         }
+
+        // Infinite bullet mode
+        if (other.gameObject.CompareTag("Diamond"))
+        {
+            infiniteTimer = INFINITE_PERIOD;
+            infiniteMode = true;
+            LaunchInfinite();
+            Destroy(other.gameObject);
+        }
+        if (colliderSpriteRender.sprite == hexagonFlat)
+        {
+            // Increase monster's maximum speed by 0.2
+            MosterMovement.max_monster_speed += 0.2f;
+
+        }
     }
+
+
+    void LaunchInfinite()
+    {
+        // Shoot projectiles with space key
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+        }
+        infiniteTimer -= Time.deltaTime;
+        if (infiniteTimer <= 0.0f)
+        {
+            infiniteMode = false;
+        }
+    }
+
+
 
     void ReverseVerticalInput()
     {
-        // 反转垂直输入
+        // Reverse vertical input
         float verticalInput = Input.GetAxisRaw("Vertical");
-        verticalInput *= -1f;
+        verticalInput *= -1.0f;
 
-        // 设置刚体的速度
+        // Set the velocity of the object
         rb.velocity = new Vector2(moveSpeed, verticalInput * moveSpeed);
     }
 

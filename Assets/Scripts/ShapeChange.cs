@@ -8,6 +8,8 @@ public class ShapeChange : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     public Sprite triangle;
     public Sprite square;
+    public Sprite diamond;
+    public Sprite hexagonFlatTop;
 
     // Start is called before the first frame update
     void Start()
@@ -21,18 +23,30 @@ public class ShapeChange : MonoBehaviour
         
     }
 
-
-    //障碍物转换为子弹
+    // Obstacle transforms into a PowerUp (Projectiles)
     public void ChangeToPowerUp()
     { 
         spriteRenderer.sprite = triangle;
         spriteRenderer.color = Color.yellow;
     }
 
-    //子弹转换为障碍物
+    // Projectiles transforms into an Obstacle
     public void ChangeToObstacle()
     {
         spriteRenderer.sprite = square;
         spriteRenderer.color = Color.blue;
+    }
+
+    // Infinite mode transformation
+    public void ChangeToInfiniteObstacle()
+    {
+        spriteRenderer.sprite = hexagonFlatTop;
+        spriteRenderer.color = Color.green;
+    }
+
+    public void ChangeToInfiniteReward()
+    {
+        spriteRenderer.sprite = diamond;
+        spriteRenderer.color = Color.magenta;
     }
 }

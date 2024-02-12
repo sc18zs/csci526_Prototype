@@ -3,7 +3,11 @@ guid: 9eed176478a154f8396a09a12c81dfb7
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - triangle: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
+  - square: {fileID: 7482667652216324306, guid: db750325989564987a34393247d883b4, type: 3}
+  - diamond: {fileID: 3625043607559282579, guid: 045b15ec09bba42448d89db77fa6f20a, type: 3}
+  - hexagonFlatTop: {fileID: 2747690628134850419, guid: 16037dbd798344f57a526d53d48f5ead, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -9,6 +9,7 @@ TagManager:
   - Projectile
   - Border
   - Destination
+  - Diamond
   layers:
   - Default
   - TransparentFX
